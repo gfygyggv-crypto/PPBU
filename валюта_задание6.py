@@ -55,15 +55,15 @@ def exchange():
             url = f"https://open.er-api.com/v6/latest/{base_currency}"
             response = requests.get(url)
             data = response.json()
-            if rate1 is not None:
-                result_label1.config(text=f"1 {base_code} = {rate1:.4f} {two_code}")
-            else:
-                result_label1.config(text=f"Ошибка получения курса для {base_code}")
+            rates = data.get("rates")
+            rate1 = rates.get(two_code)
+            rate2 = rates.get(target_code)
 
-            if rate2 is not None:
-                result_label2.config(text=f"1 {two_code} = {rate2:.4f} {target_code}")
+            if rate1 is not None and rate2 is not None:
+                final_rate = rate2 / rate1
+                mb.showinfo(title="Результат", message=f"1 {two_code} = {final_rate:.4f} {target_code}")
             else:
-                result_label2.config(text=f"Ошибка получения курса для {two_code}")
+                mb.showerror(title="Ошибка", message="Не удалось получить курс для одной из выбранных валют")
 
         except Exception as er:
             mb.showerror('Ошибка', er)
