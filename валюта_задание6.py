@@ -54,23 +54,15 @@ def exchange():
             response = requests.get(f'https://open.er-api.com/v6/latest/{base_code}')
             response.raise_for_status()
             data = response.json()
-            if target_code in data['rates']:
-                exchange_rate1 = get_exchange_rate(base, target)
-                exchange_rate1 = get_exchange_rate(two, target)
-                base = currencies[base_code]
-                target = currencies[target_code]
-                two = currencies[two_code]
-                # currency_name = currencies[code]
-                mb.showinfo('Курс обмена',
-                            f'Курс: {exchange_rate:.1f} к {two} к {target} за 1 {base}')
+            if rate1 is not None:
+                result_label1.config(text=f"1 {base_code} = {rate1:.4f} {target_code}")
             else:
-                mb.showerror('Ошибка',
-                             f'Валюта {target_code} не найдена')
-        except Exception as er:
-            mb.showerror('Ошибка', er)
+                result_label1.config(text=f"Ошибка получения курса для {base_code}")
 
-    else:
-        mb.showwarning('Внимание', 'Введите код валюты')
+            if rate2 is not None:
+                result_label2.config(text=f"1 {two_code} = {rate2:.4f} {target_code}")
+            else:
+                result_label2.config(text=f"Ошибка получения курса для {two_code}")
 
 
 currencies = {
@@ -90,7 +82,7 @@ currencies = {
 
 root = Tk()
 root.title('Курс обмена валют USD')
-root.geometry('360x180')
+root.geometry('400x350')
 
 Label(root, text='Базовая  валюта').pack()
 base_combobox = ttk.Combobox(root, values=list(currencies.keys()))
@@ -119,7 +111,7 @@ target_label.pack()
 # entry = Entry(root)
 # entry.pack()
 
-Button(text='Получить курс обмена к доллару',
+Button(text='Получить курс обмена',
        command=exchange).pack(pady=10, padx=10)
 
 root.mainloop()
